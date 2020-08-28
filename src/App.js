@@ -1,24 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState,useEffect } from 'react';
 import './App.css';
+import { Button } from '@material-ui/core';
+import { FormControl, InputLabel,Input} from '@material-ui/core';
+import Message from './Message';
+import db from './firebase';
+import firebase from 'firebase';
 
 function App() {
+  const [input,setInput] = useState('');
+  const [messages,setMessages] = useState([]);
+  const [username,setUsername] = useState('');
+  
+  useEffect(() => {
+    db.collection('messages').onSnapshot(snapshot => {
+        setMessages(snapshot.docs.map(doc => doc.data()))
+      })
+  }, [])
+
+  useEffect(() => {
+    setUsername(prompt('Enter your name'));
+  }, [])
+  
+  
+
+  // console.log(input)
+  // console.log(messages)
+
+  const sendMessage = (event) => {
+    event.preventDefault();
+
+    db.collection('messages').add({
+      message:input,
+      username:username,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    setInput('')
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <h1>Hello my dear friends</h1>
+        <form >
+          <FormControl>
+            <InputLabel htmlFor="my-input">Enter a message...</InputLabel>
+            <Input id="my-input" aria-describedby="my-helper-text" value={input} onChange={event => setInput(event.target.value)}/>
+            <Button disabled={!input} variant="contained" color="primary" type='submit' onClick={sendMessage}>Send</Button>
+          </FormControl>
+        </form>
+        {
+          messages.map(message => (
+          <Message username={username} message={message}/>
+          ))
+        }
     </div>
   );
 }

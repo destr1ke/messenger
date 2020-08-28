@@ -1,6 +1,6 @@
 .message{
-    padding: 10px;
-    margin:10px;
+    padding: 5px;
+    margin:5px;
     width:fit-content;
 }
 .message__user {
@@ -14,5 +14,8 @@
 }
 .message__guestCard {
     background-color: #e9e9eb!important;
-    color:white!important;
+    color:#444950!important;
+}
+.message__guestColor {
+    color:#0b81ff!important;
 }
